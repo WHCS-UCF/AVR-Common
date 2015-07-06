@@ -5,7 +5,13 @@
 typedef unsigned long time_t;
 
 // helper macros
-#define min(x, y) ((x) > (y) ? (y) : (x))
-#define max(x, y) ((x) < (y) ? (y) : (x))
+#define min(x, y) (((x) > (y)) ? (y) : (x))
+#define max(x, y) (((x) < (y)) ? (y) : (x))
+#define abs(x) (((x) < 0) ? -(x) : (x))
+
+static inline long map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 #endif // COMMON_H
