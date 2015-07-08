@@ -3,6 +3,7 @@
 
 #define NULL 0
 typedef unsigned long time_t;
+typedef unsigned int size_t;
 
 // helper macros
 #define min(x, y) (((x) > (y)) ? (y) : (x))
