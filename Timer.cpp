@@ -1,5 +1,7 @@
 #include "Timer.h"
 
+#include <stdio.h>
+
 Timer::Timer()
   :state_(TIMER_STOPPED), type_(TIMER_NONE), start_(0),
    length_(0), callback_(NULL)
@@ -80,8 +82,12 @@ void Timer::fire()
     return;
 
   // dont call reset
-  if(callback_)
+  if(callback_) {
+    printf("Timer(%x): DIE callback != NULL. Was 0x%x\n", this, callback_);
+    while(1);
+
     callback_();
+  }
 
   // one hit and it's done
   if(type_ == TIMER_ONESHOT)
@@ -100,8 +106,9 @@ bool Timer::update()
   time_t now = millis(), elapsed;
 
   // it doesnt make sense to call this otherwise
-  if(type_ == TIMER_NONE || state_ != TIMER_RUNNING)
+  if(type_ == TIMER_NONE || state_ != TIMER_RUNNING) {
     return false;
+  }
 
   // prevent unsigned overflow
   if(now >= start_)
@@ -112,7 +119,6 @@ bool Timer::update()
   // timer has fired!
   if(elapsed >= length_)
   {
-    //Serial.println(elapsed);
     fire();
     return true;
   }
