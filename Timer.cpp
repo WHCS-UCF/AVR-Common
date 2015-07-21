@@ -110,11 +110,7 @@ bool Timer::update()
     return false;
   }
 
-  // prevent unsigned overflow
-  if(now >= start_)
-    elapsed = now - start_;
-  else
-    return false; // lets hope this doesnt happen
+  elapsed = now - start_;
 
   // timer has fired!
   if(elapsed >= length_)
