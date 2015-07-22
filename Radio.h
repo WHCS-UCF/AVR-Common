@@ -14,10 +14,8 @@ typedef uint8_t net_id_t;
 struct radio_pkt
 {
   uint8_t size;
-  union {
-    net_id_t id;
-    uint8_t data[32];
-  };
+  net_id_t id;
+  uint8_t data[31];
 };
 
 class Radio
