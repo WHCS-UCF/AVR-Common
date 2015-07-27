@@ -44,6 +44,7 @@ bool Radio::sendTo(net_id_t who, opcode_t opcode, uint8_t * buf, uint8_t size)
   }
 
   pkt.size = size;
+
   if(pkt.size)
     memcpy(pkt.data, buf, size);
 
@@ -51,13 +52,15 @@ bool Radio::sendTo(net_id_t who, opcode_t opcode, uint8_t * buf, uint8_t size)
     m_radio->openWritingPipe(NET_PREFIX | who);
 
     printf("Radio::sendTo ");
-    dump(&pkt);
+    Radio::dump(&pkt);
 
     uint8_t outSize = 0;
     if(pkt.size > 0)
       outSize = pkt.size+PACKET_HEADER_SIZE;
     else
-      outSize = PACKET_HEADER_SIZE-sizeof(pkt.size);
+      outSize = PACKET_HEADER_SIZE;
+
+    printf("Outsize %hu\n", outSize);
 
     // write the packet with a plus 1 for size (the id)
     bool result = m_radio->write(&pkt, outSize);
@@ -76,7 +79,7 @@ void Radio::recv(radio_pkt * pkt)
     m_pktBuffer.get(pkt);
 
     printf("Radio::recv ");
-    dump(pkt);
+    Radio::dump(pkt);
   }
 }
 
