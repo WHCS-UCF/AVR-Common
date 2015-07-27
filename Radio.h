@@ -47,6 +47,9 @@ class Radio
   public:
     Radio(RF24 * rf24, net_id_t me);
     void begin();
+    void enableInterrupt();
+    void disableInterrupt();
+
     // check the PktRingBuffer
     bool available();
     bool queuePacket(radio_pkt * pkt);

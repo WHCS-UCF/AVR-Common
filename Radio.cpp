@@ -3,6 +3,8 @@
 #include <avr/pgmspace.h>
 #include <stdio.h>
 
+#include "pinout.h"
+
 Radio::Radio(RF24 * rf24, net_id_t me)
   :m_id(me), m_radio(rf24), m_listening(false)
 {
@@ -19,6 +21,48 @@ void Radio::begin()
   
   m_radio->openReadingPipe(1, NET_PREFIX | m_id);
   startListening();
+}
+
+void Radio::enableInterrupt()
+{
+#if defined(__AVR_ATmega328P__)
+  EICRA |= _BV(ISC11);
+  EICRA &= ~_BV(ISC10);
+
+  PIN_MODE_INPUT(NRF_IRQ);
+  PIN_HIGH(NRF_IRQ); //Enable the pull-up resistor
+
+  EIMSK |= _BV(INT1);
+#elif defined(__AVR_ATmega32__)
+  MCUCR |= _BV(ISC11);
+  MCUCR &= ~_BV(ISC10);
+
+  PIN_MODE_INPUT(NRF_IRQ);
+  PIN_HIGH(NRF_IRQ); //Enable the pull-up resistor
+
+  GICR |= _BV(INT0);
+#endif
+}
+
+void Radio::disableInterrupt()
+{
+#if defined(__AVR_ATmega328P__)
+  EICRA &= ~_BV(ISC11);
+  EICRA &= ~_BV(ISC10);
+
+  PIN_MODE_INPUT(NRF_IRQ);
+  PIN_HIGH(NRF_IRQ); //Enable the pull-up resistor
+
+  EIMSK &= _BV(INT1);
+#elif defined(__AVR_ATmega32__)
+  MCUCR &= ~_BV(ISC11);
+  MCUCR &= ~_BV(ISC10);
+
+  PIN_MODE_INPUT(NRF_IRQ);
+  PIN_HIGH(NRF_IRQ); //Enable the pull-up resistor
+
+  GICR &= _BV(INT0);
+#endif
 }
 
 bool Radio::available()
