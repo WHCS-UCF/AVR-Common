@@ -22,6 +22,18 @@ typedef uint8_t opcode_t;
   #error "Exceeded the max packet size
 #endif
 
+// Radio opcodes
+#define RADIO_OP_SET_STATUS 0x1
+#define RADIO_OP_GET_STATUS 0x2
+#define RADIO_OP_RESTART 0x3
+#define RADIO_OP_PING 0x4
+#define RADIO_OP_PONG 0x5
+
+#define RADIO_OP_SUCCESS 0x80
+#define RADIO_OP_FAILURE 0x81
+#define RADIO_OP_SUCCESS_RESULT 0x82
+#define RADIO_OP_FAILURE_RESULT 0x83
+
 struct radio_pkt
 {
   net_id_t from;
