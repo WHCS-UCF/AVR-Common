@@ -44,6 +44,8 @@ bool Radio::sendTo(net_id_t who, opcode_t opcode, uint8_t * buf, uint8_t size)
   }
 
   pkt.size = size;
+  if(pkt.size)
+    memcpy(pkt.data, buf, size);
 
   stopListening();
     m_radio->openWritingPipe(NET_PREFIX | who);
@@ -103,7 +105,7 @@ bool Radio::isListening()
 
 void Radio::dump(radio_pkt * pkt)
 {
-  if(!pkt || !pkt->size)
+  if(!pkt)
     return;
 
   printf_P(PSTR("Pkt(from %hu, op %02x)"), pkt->from, pkt->opcode);
