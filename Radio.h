@@ -11,19 +11,23 @@
 // Specifies a station ID
 // Used for pipes and internally for message structures
 typedef uint8_t net_id_t;
+typedef uint8_t opcode_t;
 
 #define MAX_PACKET_SIZE 10
-#define PACKET_HEADER_SIZE 1
+#define PACKET_HEADER_SIZE 3
+#define PAYLOAD_SIZE MAX_PACKET_SIZE - PACKET_HEADER_SIZE 
+#define MIN_PACKET_SIZE PACKET_HEADER_SIZE
 
-#if MAX_PACKET_SIZE - PACKET_HEADER_SIZE < 0
+#if PAYLOAD_SIZE < 0
   #error "Exceeded the max packet size
 #endif
 
 struct radio_pkt
 {
-  uint8_t size;
-  net_id_t id;
-  uint8_t data[MAX_PACKET_SIZE-PACKET_HEADER_SIZE];
+  net_id_t from;
+  opcode_t opcode;
+  uint8_t size; // optional: size of the below data
+  uint8_t data[PAYLOAD_SIZE];
 };
 
 class Radio
@@ -35,7 +39,7 @@ class Radio
     bool available();
     bool queuePacket(radio_pkt * pkt);
 
-    bool sendTo(net_id_t who, radio_pkt * pkt);
+    bool sendTo(net_id_t who, opcode_t opcode, uint8_t * buf, uint8_t size);
     void recv(radio_pkt * pkt);
     static void dump(radio_pkt * pkt);
   private:

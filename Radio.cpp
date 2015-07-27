@@ -31,18 +31,34 @@ bool Radio::queuePacket(radio_pkt * pkt)
   return m_pktBuffer.put(pkt);
 }
 
-bool Radio::sendTo(net_id_t who, radio_pkt * pkt)
+bool Radio::sendTo(net_id_t who, opcode_t opcode, uint8_t * buf, uint8_t size)
 {
-  pkt->id = who;
+  radio_pkt pkt;
+  pkt.from = m_id; // from us. duh
+  pkt.opcode = opcode;
+
+  if(size > PAYLOAD_SIZE)
+  {
+    printf_P(PSTR("Radio::sendTo pkt exceeded max payload\n"));
+    return false;
+  }
+
+  pkt.size = size;
 
   stopListening();
     m_radio->openWritingPipe(NET_PREFIX | who);
 
     printf("Radio::sendTo ");
-    dump(pkt);
+    dump(&pkt);
+
+    uint8_t outSize = 0;
+    if(pkt.size > 0)
+      outSize = pkt.size+PACKET_HEADER_SIZE;
+    else
+      outSize = PACKET_HEADER_SIZE-sizeof(pkt.size);
 
     // write the packet with a plus 1 for size (the id)
-    bool result = m_radio->write(&pkt->id, pkt->size+1);
+    bool result = m_radio->write(&pkt, outSize);
   startListening();
 
   return result;
@@ -87,10 +103,18 @@ bool Radio::isListening()
 
 void Radio::dump(radio_pkt * pkt)
 {
-  if(!pkt)
+  if(!pkt || !pkt->size)
     return;
 
-  printf_P(PSTR("Pkt(len %hu, id %hu) ["), pkt->size, pkt->id);
+  printf_P(PSTR("Pkt(from %hu, op %02x)"), pkt->from, pkt->opcode);
+
+  if(!pkt->size)
+  {
+    printf_P(PSTR("\n"));
+    return;
+  }
+  else
+    printf_P(PSTR(" payload sz %hu ["), pkt->size);
 
   for(int i = 0; i < pkt->size; i++)
     if(i+1 == pkt->size)
