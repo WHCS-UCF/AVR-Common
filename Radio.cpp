@@ -106,7 +106,7 @@ bool Radio::sendTo(net_id_t who, opcode_t opcode, uint8_t * buf, uint8_t size)
     else
       outSize = PACKET_HEADER_SIZE;
 
-    printf("Outsize %hu\n", outSize);
+    //printf("Outsize %hu\n", outSize);
 
     // write the packet with a plus 1 for size (the id)
     bool result = m_radio->write(&pkt, outSize);
