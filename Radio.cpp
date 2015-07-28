@@ -20,6 +20,8 @@ void Radio::begin()
   //m_radio->powerDown();
   
   m_radio->openReadingPipe(1, NET_PREFIX | m_id);
+  m_radio->enableDynamicPayloads();
+  m_radio->setPayloadSize(MAX_PACKET_SIZE);
   startListening();
 }
 

@@ -10,10 +10,24 @@
 
 volatile time_t gMillis = 0;
 
+/* Story time:
+ *  Due to the frequency of the millis counting timer, 
+ *  it has the potential to affect similar, higher priority
+ *  interrupts, such as software serial.
+ *
+ *  Due to this, and through research, I have included the
+ *  ISR attribute ISR_NOBLOCK. This makes sure that
+ *  as soon as possible, interrupts are reenabled.
+ *  Essentially, this timing interrupt isn't that important
+ *  compared to real-time software serial. That attribute
+ *  allows for the real important interrupts to have priority.
+ *  
+ *  Neat!
+ */
 #if defined(__AVR_ATmega328P__)
-ISR(TIMER2_COMPA_vect)
+ISR(TIMER2_COMPA_vect, ISR_NOBLOCK)
 #elif defined(__AVR_ATmega32__)
-ISR(TIMER2_COMP_vect)
+ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 #endif
 {
   gMillis++;

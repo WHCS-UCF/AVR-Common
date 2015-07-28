@@ -28,6 +28,7 @@ typedef uint8_t opcode_t;
 #define RADIO_OP_RESTART 0x3
 #define RADIO_OP_PING 0x4
 #define RADIO_OP_PONG 0x5
+#define RADIO_OP_NEWDATA 0x6
 
 #define RADIO_OP_SUCCESS 0x80
 #define RADIO_OP_FAILURE 0x81
