@@ -63,7 +63,7 @@ class Radio
     void startListening();
     bool isListening();
 
-    PktBuffer<3> m_pktBuffer;
+    PktBuffer<5> m_pktBuffer;
     RF24 * m_radio;
     net_id_t m_id;
     bool m_listening;

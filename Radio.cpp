@@ -17,11 +17,12 @@ void Radio::begin()
   m_radio->begin();
 
   // start powered off
-  //m_radio->powerDown();
+  m_radio->powerUp();
   
+  m_radio->openReadingPipe(0, 0xabc127ffdeLL);
   m_radio->openReadingPipe(1, NET_PREFIX | m_id);
-  m_radio->enableDynamicPayloads();
-  m_radio->setPayloadSize(MAX_PACKET_SIZE);
+  //m_radio->enableDynamicPayloads();
+  //m_radio->setPayloadSize(MAX_PACKET_SIZE);
   startListening();
 }
 
@@ -127,12 +128,16 @@ void Radio::recv(radio_pkt * pkt)
     printf("Radio::recv ");
     Radio::dump(pkt);
   }
+  else
+  {
+    printf("Not availble\n");
+  }
 }
 
 void Radio::stopListening()
 {
-  if(!m_listening)
-    return;
+  /*if(!m_listening)
+    return;*/
 
   m_radio->stopListening();
   m_listening = false;
@@ -140,8 +145,8 @@ void Radio::stopListening()
 
 void Radio::startListening()
 {
-  if(m_listening)
-    return;
+  /*if(m_listening)
+    return;*/
 
   m_radio->startListening();
   m_listening = true;
