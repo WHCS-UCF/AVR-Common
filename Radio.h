@@ -56,6 +56,7 @@ class Radio
     bool queuePacket(radio_pkt * pkt);
 
     bool sendTo(net_id_t who, opcode_t opcode, uint8_t * buf, uint8_t size);
+    void readPackets();
     void recv(radio_pkt * pkt);
     static void dump(radio_pkt * pkt);
   private:

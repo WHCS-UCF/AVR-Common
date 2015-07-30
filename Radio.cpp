@@ -95,6 +95,9 @@ bool Radio::sendTo(net_id_t who, opcode_t opcode, uint8_t * buf, uint8_t size)
   if(pkt.size)
     memcpy(pkt.data, buf, size);
 
+  // read any received packets before discarding them
+  readPackets();
+
   stopListening();
     m_radio->openWritingPipe(NET_PREFIX | who);
 
@@ -114,6 +117,17 @@ bool Radio::sendTo(net_id_t who, opcode_t opcode, uint8_t * buf, uint8_t size)
   startListening();
 
   return result;
+}
+
+void Radio::readPackets()
+{
+  radio_pkt pkt;
+  while(m_radio->available())
+  {
+    if(m_radio->read(&pkt, MAX_PACKET_SIZE))
+      if(!this->queuePacket(&pkt))
+          printf("WARNING: Failed to queue\n");
+  }
 }
 
 void Radio::recv(radio_pkt * pkt)
